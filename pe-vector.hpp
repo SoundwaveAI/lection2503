@@ -11,16 +11,18 @@ namespace knk
       Vector();
       Vector(const Vector< T >& rhs) = delete;
       Vector(size_t size, const T& value);
-      explicit Vector(size_t size);
       Vector< T >& operator=(const Vector< T >& rhs) = delete;
       bool isEmpty() const noexcept;
       size_t getSize() const noexcept;
+      //Релиз + тест
+      size_t getCapacity() const noexcept;
       void pushBack(const T&);
       void popBack();
 
     private:
       T* data_;
       size_t size_, capacity_;
+      explicit Vector(size_t size);
   };
 }
 
