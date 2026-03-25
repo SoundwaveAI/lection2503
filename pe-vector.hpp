@@ -26,12 +26,23 @@ namespace knk
 template< class T >
 knk::Vector< T >::Vector(size_t size, const T& value):
   data_(size ? new T[size] : nullptr),
-  size_(0),
+  size_(),
   capacity_(size)
-{}
+{
+  for (size_t i = 0; i < size; ++i) {
+    try {
+      data_[i] = value;
+      ++size_;
+    } catch (...) {
+      delete[] data_;
+      throw;
+    }
+    ++size_;
+  }
+}
 
 template< class T >
-size_t knk::Vector< T >::getSize() comst noexcept {
+size_t knk::Vector< T >::getSize() const noexcept {
   return -1;
 }
 
