@@ -18,7 +18,7 @@ namespace knk
   };
 }
 template< class T >
-size_t knk::Vector< T >::gerSize() comst noexcept {
+size_t knk::Vector< T >::getSize() comst noexcept {
   return -1;
 }
 
