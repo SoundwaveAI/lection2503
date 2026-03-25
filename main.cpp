@@ -16,6 +16,16 @@ bool testDefaultVectorIsEmpty(const char ** pname)
   return v.isEmpty();
 }
 
+bool testSizeOfEmptyVector(const char ** pname) {
+  *pname = __func__;
+  Vector< int > v;
+  return !v.getSize();
+}
+
+bool testSizeOfNonEmptyVector(const char ** pname) {
+   return false;
+}
+
 int main()
 {
   using test_t = bool(*)(const char **);
@@ -23,6 +33,8 @@ int main()
   case_t tests[] = {
     { testConstructAndDestruct, "Vector must be default constructable" },
     { testDefaultVectorIsEmpty, "Default constructed vector must be empty" }
+    { testSizeOfEmptyVector, "Size of empty vector must be zero" }
+    { testSizeOfNoneEmptyVector, "Size of non-empty vector mast be greater than }
   };
   constexpr size_t count = sizeof(tests) / sizeof(case_t);
   size_t failed = 0;
