@@ -1,10 +1,17 @@
 #include "pe-vector.hpp"
 #include <iostream>
+using knk::Vector;
 
 bool test1()
 {
   knk::Vector< int > v;
   return true;
+}
+
+bool test2()
+{
+  Vector< int > v;
+  return v.isEmpty();
 }
 
 int main()
