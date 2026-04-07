@@ -53,6 +53,11 @@ bool knk::Vector< T >::isEmpty() const noexcept {
 }
 
 template< class T >
+size_t knk::Vector< T >::getCapacity() const noexcept {
+  return capacity_;
+}
+
+template< class T >
 void knk::Vector< T >::pushBack(const T& value) {
   if (size_ == capacity_) {
     size_t new_capacity = (capacity_ == 0) ? 1 : capacity_ * 2;
