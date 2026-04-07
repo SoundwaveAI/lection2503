@@ -44,12 +44,44 @@ knk::Vector< T >::Vector(size_t size, const T& value):
 
 template< class T >
 size_t knk::Vector< T >::getSize() const noexcept {
-  return -1;
+  return size_;
 }
 
 template< class T >
 bool knk::Vector< T >::isEmpty() const noexcept {
   return !size_;
+}
+
+template< class T >
+void knk::Vector< T >::pushBack(const T& value) {
+  if (size_ == capacity_) {
+    size_t new_capacity = (capacity_ == 0) ? 1 : capacity_ * 2;
+    T* new_data = new T[new_capacity];
+    try {
+      for (size_t i = 0; i < size_; ++i) {
+        new_data[i] = data_[i];
+      }
+      new_data[size_] = value;
+    } catch (...) {
+      delete[] new_data;
+      throw;
+    }
+
+    delete[] data_;
+    data_ = new_data;
+    capacity_ = new_capacity;
+    ++size_;
+  } else {
+    data_[size_] = value;
+    ++size_;
+  }
+}
+
+template< class T >
+void knk::Vector< T >::popBack() {
+  if (size_ > 0) {
+    --size_;
+  }
 }
 
 template< class T >
@@ -63,4 +95,5 @@ template< class T >
 knk::Vector< T >::~Vector() {
   delete[] data_;
 }
+
 #endif
