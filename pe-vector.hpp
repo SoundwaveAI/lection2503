@@ -1,6 +1,7 @@
 #ifndef PE_VECTOR_HPP
 #define PE_VECTOR_HPP
 #include <cstddef>
+#include <stdexcept>
 
 namespace knk
 {
@@ -18,7 +19,7 @@ namespace knk
       size_t getCapacity() const noexcept;
       void pushBack(const T&);
       void popBack();
-
+      //dopisat tests
       T& operator[](size_t id) noexcept;
       const T& operator[](size_t id) const noexcept;
       T& at(size_t id);
@@ -30,13 +31,34 @@ namespace knk
       explicit Vector(size_t size);
   };
 }
+
+template< class T >
+T& knk::Vector< T >::operator[](size_t id) noexcept {
+  return const_cast< T& >((*static_cast< const Vector< T >* >(this))[id]);
+  //return data_[id];
+}
+
+template< class T >
+const T& knk::Vector< T >::operator[](size_t id) const noexcept {
+  return data_[id];
+}
+
 template< class T>
 T& knk::Vector< T >::at(size_t id) {
-  if (id < getSize()) {
-    return data_[id];
-  }
-  throw std::logic_error("id > size");
+  const Vector< T >* cthis = this;
+  const T& cr = cthis->at(id);
+  T& r = const_cast< T& >(cr);
+  return r;
 }
+
+template< class T >
+const T& knk::Vector< T >::at(size_t id) const {
+  if (id < getSize()) {
+    return (*this)[id];
+  }
+  throw std::out_of_range("id out of bound");
+}
+
 template< class T >
 knk::Vector< T >::Vector(const Vector< T >& rhs):
   Vector(rhs.getSize())

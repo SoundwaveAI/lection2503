@@ -33,14 +33,28 @@ bool testSizeOfNonEmptyVector(const char ** pname) {
 bool testElementCheckAccess(const char ** pname) {
   *pname = __func__;
   Vector< int > v;
-  //v.pushBack(10);
+  v.pushBack(2);
+  const Vector< int >& rv = v;
   try {
-    int& r = v.at(0);
+    const int& r = rv.at(0);
     return r == 2;
   } catch (...) {
     return false;
   }
 }
+bool testElementCheckConstAccess(const char ** pname) {
+  *pname = __func__;
+  Vector< int > v;
+  v.pushBack(2);
+  const Vector< int >& rv = v;
+  try {
+    const int& r = rv.at(0);
+    return r == 2;
+  } catch (...) {
+    return false;
+  }
+}
+
 
 bool testElementCheckOutOfBoundAccess(const char ** pname) {
   *pname = __func__;
@@ -49,12 +63,26 @@ bool testElementCheckOutOfBoundAccess(const char ** pname) {
     v.at(0);
     return false;
   } catch (const std::out_of_range& e) {
-    const char ** text = e.what();
+    const char * text = e.what();
     return !std::strcmp("id out of bound", text);
   } catch (...) {
     return true;
   }
 }
+bool testElementCheckOutOfBoundConstAccess(const char ** pname) {
+  *pname = __func__;
+  const Vector< int > v;
+  try {
+    v.at(0);
+    return false;
+  } catch (const std::out_of_range& e) {
+    const char * text = e.what();
+    return !std::strcmp("id out of bound", text);
+  } catch (...) {
+    return true;
+  }
+}
+
 bool  testCopyConstructor(const char ** pname) {
   *pname = __func__;
   Vector< int > v; //??
@@ -120,8 +148,10 @@ int main()
     { testPushBackCapacityGrowth, "Pushing back must grow capacity when needed" },
     { testPopBackDecreasesSize, "Popping back must decrease size" }
     { testElementCheckAccess, "Inbound access must return lvalue reference" },
-    { testElementCheckOutofBoundAccess, "Out of bound access must generate" },
-    { testCopyConstructor, "Copied vector must be equal to original" }
+    { testElementCheckOutOfBoundAccess, "Out of bound access must generate" },
+    { testCopyConstructor, "Copied vector must be equal to original" },
+    { testElementCheckConstAccess, "same as checkaccess" },
+    { testElementCheckOutOfBoundConstAccess, "same as checkbound" }
   };
   constexpr size_t count = sizeof(tests) / sizeof(case_t);
   size_t failed = 0;
@@ -131,7 +161,7 @@ int main()
     try {
       bool r = tests[i].first(&testName);
     } catch (const std::logic_error& e) {
-      std::cout << "[Not run] " << " testName << "/n";
+      std::cout << "[Not run] " <<  testName << "/n";
       std::cout << "/t" << "Reason: " << e.what() << "/n";
       ++failed;
       continue;
