@@ -11,8 +11,10 @@ namespace knk
       ~Vector();
       Vector();
       Vector(const Vector< T >& rhs);
+      Vector(Vector< T >&& rhs) noexcept;
       Vector(size_t size, const T& value);
       Vector< T >& operator=(const Vector< T >& rhs);
+      Vector< T >& operator=(Vector< T >&& rhs) noexcept;
       void swap(Vector < T >& rhs) noexcept;
       bool isEmpty() const noexcept;
       size_t getSize() const noexcept;
@@ -33,12 +35,28 @@ namespace knk
       explicit Vector(size_t size);
   };
 }
+template< class T >
+knk::Vector< T >::Vector(Vector < T >&& rhs) noexcept:
+  data_(rhs.data_),
+  size_(rhs.size_),
+  capacity_(rhs.capacity_)
+{
+  rhs.data_ = nullptr;
+}
+
+template< class T >
+knk::Vector< T >& knk::Vector < T >::operator=(Vector< T >&& rhs) noexcept:
+{
+  Vector< T > cpy(std::move(rhs));
+  swap(cpy);
+  return *this;
+}
 
 template< class T >
 void knk::Vector< T >::pushFront(const T& v)
 {
   Vector< T > v(getSize() + 1);
-  v[0] = v;
+  v[0] = t;
   for (size_t i = 0; i < v.getSize(); ++i) {
     v[i] = (*this)[i-1];
   }
@@ -82,7 +100,7 @@ knk::Vector< T >::Vector(const Vector< T >& rhs):
 }
 
 template< class T >
-Vector< T >& Vector< T >::operator=(const Vector< T >& rhs)
+knk::Vector< T >& Vector< T >::operator=(const Vector< T >& rhs)
 {
   Vector< T > cpy(rhs);
   swap(cpy);
@@ -90,7 +108,7 @@ Vector< T >& Vector< T >::operator=(const Vector< T >& rhs)
 }
 
 template< class T >
-void Vector< T >::swap(Vector< T >& rhs) noexcept
+void knk::Vector< T >::swap(Vector< T >& rhs) noexcept
 {
   std::swap(data_, cpy.data_);
   std::swap(size_, cpy.size_);

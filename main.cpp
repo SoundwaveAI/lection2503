@@ -89,7 +89,7 @@ bool  testCopyConstructor(const char ** pname) {
   v.pushBack(1);
   v.pushBack(2);
   Vector< int > yav = v;
-  if (!v.isEmpty() || !yav.isEmpty()) {
+  if (!v.isEmpty() && !yav.isEmpty()) {
     throw std::logic_error("Vectors expected is not to be empty");
   }
   bool isEqual = yav.getSize() == v.getSize();
@@ -146,7 +146,7 @@ int main()
     { testCapacityOfEmptyVector, "Capacity of empty vector must be zero" },
     { testPushBackIncreasesSize, "Pushing back must increase size" },
     { testPushBackCapacityGrowth, "Pushing back must grow capacity when needed" },
-    { testPopBackDecreasesSize, "Popping back must decrease size" }
+    { testPopBackDecreasesSize, "Popping back must decrease size" },
     { testElementCheckAccess, "Inbound access must return lvalue reference" },
     { testElementCheckOutOfBoundAccess, "Out of bound access must generate" },
     { testCopyConstructor, "Copied vector must be equal to original" },
@@ -159,10 +159,10 @@ int main()
     const char * testName = nullptr;
     bool r = false;
     try {
-      bool r = tests[i].first(&testName);
+      r = tests[i].first(&testName);
     } catch (const std::logic_error& e) {
-      std::cout << "[Not run] " <<  testName << "/n";
-      std::cout << "/t" << "Reason: " << e.what() << "/n";
+      std::cout << "[Not run] " <<  testName << "\n";
+      std::cout << "\t" << "Reason: " << e.what() << "\n";
       ++failed;
       continue;
     }
