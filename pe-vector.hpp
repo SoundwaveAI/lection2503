@@ -9,7 +9,7 @@ namespace knk
     public:
       ~Vector();
       Vector();
-      Vector(const Vector< T >& rhs) = delete;
+      Vector(const Vector< T >& rhs);
       Vector(size_t size, const T& value);
       Vector< T >& operator=(const Vector< T >& rhs) = delete;
       bool isEmpty() const noexcept;
@@ -19,11 +19,31 @@ namespace knk
       void pushBack(const T&);
       void popBack();
 
+      T& operator[](size_t id) noexcept;
+      const T& operator[](size_t id) const noexcept;
+      T& at(size_t id);
+      const T& at(size_t id) const;
+
     private:
       T* data_;
       size_t size_, capacity_;
       explicit Vector(size_t size);
   };
+}
+template< class T>
+T& knk::Vector< T >::at(size_t id) {
+  if (id < getSize()) {
+    return data_[id];
+  }
+  throw std::logic_error("id > size");
+}
+template< class T >
+knk::Vector< T >::Vector(const Vector< T >& rhs):
+  Vector(rhs.getSize())
+{
+  for (size_t i = 0; i < rhs.getSize(); ++i) {
+    data_[i] = rhs.data_[i];
+  }
 }
 
 template< class T >
