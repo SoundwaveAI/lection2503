@@ -102,6 +102,9 @@ knk::Vector< T >::Vector(const Vector< T >& rhs):
 template< class T >
 knk::Vector< T >& Vector< T >::operator=(const Vector< T >& rhs)
 {
+  if (this == std::addressof(rhs)) {
+    return *this;
+  }
   Vector< T > cpy(rhs);
   swap(cpy);
   return *this;
