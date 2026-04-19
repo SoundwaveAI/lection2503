@@ -260,16 +260,30 @@ bool knk::Vciter< T >::operator<(const Vciter< T >& other) const {
 }
 
 template< class T >
+knk::Vector< T >::Vector():
+  data_(nullptr),
+  size_(0),
+  capacity_(0)
+{}
+
+template< class T >
+knk::Vector< T >::~Vector() {
+  delete[] data_;
+}
+
+template< class T >
 knk::Vector< T >::Vector(Vector < T >&& rhs) noexcept:
   data_(rhs.data_),
   size_(rhs.size_),
   capacity_(rhs.capacity_)
 {
   rhs.data_ = nullptr;
+  rhs.size_ = 0;
+  rhs.capacity_ = 0;
 }
 
 template< class T >
-knk::Vector< T >& knk::Vector < T >::operator=(Vector< T >&& rhs) noexcept:
+knk::Vector< T >& knk::Vector < T >::operator=(Vector< T >&& rhs) noexcept
 {
   Vector< T > cpy(std::move(rhs));
   swap(cpy);
@@ -279,18 +293,17 @@ knk::Vector< T >& knk::Vector < T >::operator=(Vector< T >&& rhs) noexcept:
 template< class T >
 void knk::Vector< T >::pushFront(const T& v)
 {
-  Vector< T > v(getSize() + 1);
-  v[0] = t;
-  for (size_t i = 0; i < v.getSize(); ++i) {
-    v[i] = (*this)[i-1];
+  Vector< T > tmp(getSize() + 1);
+  tmp[0] = v;
+  for (size_t i = 0; i < getSize(); ++i) {
+    tmp[i + 1] = data_[i];
   }
-  swap(v);
+  swap(tmp);
 }
 
 template< class T >
 T& knk::Vector< T >::operator[](size_t id) noexcept {
   return const_cast< T& >((*static_cast< const Vector< T >* >(this))[id]);
-  //return data_[id];
 }
 
 template< class T >
@@ -337,9 +350,9 @@ knk::Vector< T >& Vector< T >::operator=(const Vector< T >& rhs)
 template< class T >
 void knk::Vector< T >::swap(Vector< T >& rhs) noexcept
 {
-  std::swap(data_, cpy.data_);
-  std::swap(size_, cpy.size_);
-  std::swap(capacity_, cpy.capacity_);
+  std::swap(data_, rhs.data_);
+  std::swap(size_, rhs.size_);
+  std::swap(capacity_, rhs.capacity_);
 }
 
 template< class T >
@@ -406,15 +419,69 @@ void knk::Vector< T >::popBack() {
 }
 
 template< class T >
-knk::Vector< T >::Vector():
-  data_(nullptr),
-  size_(0),
-  capacity_(0)
-{}
+void knk::Vector< T >::insert(size_t id, const T& t) {
+  if (id > getSize()) {
+    throw std::out_of_range("id out of bound");
+  }
+  Vector< T > tmp(getSize() + 1);
+  for (size_t i = 0; i < id; ++i) {
+    tmp[i] = data_[i];
+  }
+  tmp[id] = t;
+  for (size_t i = id; i < getSize(); ++i) {
+    tmp[i + 1] = data_[i];
+  }
+  swap(tmp);
+}
 
 template< class T >
-knk::Vector< T >::~Vector() {
-  delete[] data_;
+void knk::Vector< T >::insert(size_t id, const Vector< T >& rhs, size_t beg, size_t end_idx) {
+  if (id > getSize() || beg > end_idx || end_idx > rhs.getSize()) {
+    throw std::out_of_range("id out of bound");
+  }
+  size_t count = end_idx - beg;
+  Vector< T > tmp(getSize() + count);
+  for (size_t i = 0; i < id; ++i) {
+    tmp[i] = data_[i];
+  }
+  for (size_t i = 0; i < count; ++i) {
+    tmp[id + i] = rhs.data_[beg + i];
+  }
+  for (size_t i = id; i < getSize(); ++i) {
+    tmp[id + count + i] = data_[i];
+  }
+  swap(tmp);
+}
+
+template< class T >
+void knk::Vector< T >::erase(size_t id) {
+  if (id >= getSize()) {
+    throw std::out_of_range("id out of bound");
+  }
+  Vector< T > tmp(getSize() - 1);
+  for (size_t i = 0; i < id; ++i) {
+    tmp[i] = data_[i];
+  }
+  for (size_t i = id + 1; i < getSize(); ++i) {
+    tmp[i - 1] = data_[i];
+  }
+  swap(tmp);
+}
+
+template< class T >
+void knk::Vector< T >::erase(size_t beg, size_t end_idx) {
+  if (beg > end_idx || end_idx > getSize()) {
+    throw std::out_of_range("id out of bound");
+  }
+  size_t count = end_idx - beg;
+  Vector< T > tmp(getSize() - count);
+  for (size_t i = 0; i < beg; ++i) {
+    tmp[i] = data_[i];
+  }
+  for (size_t i = end_idx; i < getSize(); ++i) {
+    tmp[i - count] = data_[i];
+  }
+  swap(tmp);
 }
 
 #endif
