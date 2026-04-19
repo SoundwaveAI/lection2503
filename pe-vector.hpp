@@ -2,49 +2,79 @@
 #define PE_VECTOR_HPP
 #include <cstddef>
 #include <stdexcept>
+#include <utility>
 
 namespace knk
 {
+  template< class T > struct Viter;
+  template< class T > struct Vciter;
+
   template< class T >
   struct Vector {
     public:
       ~Vector();
       Vector();
-      //написать тесты
       Vector(const Vector< T >& rhs);
       Vector(Vector< T >&& rhs) noexcept;
       Vector(size_t size, const T& value);
       Vector< T >& operator=(const Vector< T >& rhs);
       Vector< T >& operator=(Vector< T >&& rhs) noexcept;
       void swap(Vector < T >& rhs) noexcept;
-      //использовать копи энд своп (Classwork)
+
       void insert(size_t id, const T& t);
       void erase(size_t id);
-      void insert(size_t id, const Vector< T >& rhs, size_t beg, size_t and); //даже если рхс равен зису должен корректно
-      void erase(size_t beg, size_t end); //до указаного айди не включая
+      void insert(size_t id, const Vector< T >& rhs, size_t beg, size_t end_idx);
+      void erase(size_t beg, size_t end_idx);
+
       bool isEmpty() const noexcept;
       size_t getSize() const noexcept;
-      //Dz
-      //Реализовать итераторы конст не конст вектора(random access), сами итераторы не тестируем
-      //Придумать по 3 insert/erase, но с итераторами (vsego 6)
-      struct VectorIter {};
-      template< class FwdIter >
-      void insert(VectorIter pos, FwdIter begin, FwdIter end);
-      //Релиз + тест
+
       size_t getCapacity() const noexcept;
       void pushBack(const T&);
       void popBack();
       void pushFront(const T& v);
-      //dopisat tests
+
       T& operator[](size_t id) noexcept;
       const T& operator[](size_t id) const noexcept;
       T& at(size_t id);
       const T& at(size_t id) const;
 
+      Viter< T > begin() noexcept;
+      Viter< T > end() noexcept;
+      Vciter< T > cbegin() const noexcept;
+      Vciter< T > cend() const noexcept;
+
+      void insert(Vciter< T > pos, const T& value);
+      void insert(Vciter< T > pos, size_t count, const T& value);
+      void insert(Vciter< T > pos, Vciter< T > first, Vciter< T > last);
+
+      void erase(Vciter< T > pos);
+      void erase(Vciter< T > first, Vciter< T > last);
+      void erase(Vciter< T > pos, size_t count);
+
     private:
       T* data_;
       size_t size_, capacity_;
       explicit Vector(size_t size);
+  };
+
+  template< class T >
+  struct Viter {
+      T* p;
+      Viter(T* ptr = nullptr);
+      T& operator*() const;
+      Viter< T >& operator++();
+      Viter< T > operator++(int);
+      Viter< T >& operator--();
+      Viter< T > operator--(int);
+      Viter< T >& operator+=(size_t n);
+      Viter< T >& operator-=(size_t n);
+      Viter< T > operator+(size_t n) const;
+      Viter< T > operator-(size_t n) const;
+      long long operator-(const Viter< T >& other) const;
+      bool operator==(const Viter< T >& other) const;
+      bool operator!=(const Viter< T >& other) const;
+      bool operator<(const Viter< T >& other) const;
   };
 }
 
