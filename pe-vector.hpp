@@ -484,4 +484,82 @@ void knk::Vector< T >::erase(size_t beg, size_t end_idx) {
   swap(tmp);
 }
 
+template< class T >
+knk::Viter< T > knk::Vector< T >::begin() noexcept {
+  return Viter< T >(data_);
+}
+
+template< class T >
+knk::Viter< T > knk::Vector< T >::end() noexcept {
+  return Viter< T >(data_ + size_);
+}
+
+template< class T >
+knk::Vciter< T > knk::Vector< T >::cbegin() const noexcept {
+  return Vciter< T >(data_);
+}
+
+template< class T >
+knk::Vciter< T > knk::Vector< T >::cend() const noexcept {
+  return Vciter< T >(data_ + size_);
+}
+
+template< class T >
+void knk::Vector< T >::insert(Vciter< T > pos, const T& value) {
+  insert(pos.p - data_, value);
+}
+
+template< class T >
+void knk::Vector< T >::insert(Vciter< T > pos, size_t count, const T& value) {
+  size_t id = pos.p - data_;
+  Vector< T > tmp(getSize() + count);
+  for (size_t i = 0; i < id; ++i) {
+    tmp[i] = data_[i];
+  }
+  for (size_t i = 0; i < count; ++i) {
+    tmp[id + i] = value;
+  }
+  for (size_t i = id; i < getSize(); ++i) {
+    tmp[id + count + i] = data_[i];
+  }
+  swap(tmp);
+}
+
+template< class T >
+void knk::Vector< T >::insert(Vciter< T > pos, Vciter< T > first, Vciter< T > last) {
+  size_t id = pos.p - data_;
+  size_t count = 0;
+  for (Vciter< T > it = first; it != last; ++it) {
+    ++count;
+  }
+  Vector< T > tmp(getSize() + count);
+  for (size_t i = 0; i < id; ++i) {
+    tmp[i] = data_[i];
+  }
+  size_t i = 0;
+  for (Vciter< T > it = first; it != last; ++it) {
+    tmp[id + i] = *it;
+    ++i;
+  }
+  for (size_t j = id; j < getSize(); ++j) {
+    tmp[id + count + j] = data_[j];
+  }
+  swap(tmp);
+}
+
+template< class T >
+void knk::Vector< T >::erase(Vciter< T > pos) {
+  erase(pos.p - data_);
+}
+
+template< class T >
+void knk::Vector< T >::erase(Vciter< T > first, Vciter< T > last) {
+  erase(first.p - data_, last.p - data_);
+}
+
+template< class T >
+void knk::Vector< T >::erase(Vciter< T > pos, size_t count) {
+  erase(pos.p - data_, pos.p - data_ + count);
+}
+
 #endif
