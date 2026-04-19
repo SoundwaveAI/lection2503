@@ -76,6 +76,26 @@ namespace knk
       bool operator!=(const Viter< T >& other) const;
       bool operator<(const Viter< T >& other) const;
   };
+
+  template< class T >
+  struct Vciter {
+      const T* p;
+      Vciter(const T* ptr = nullptr);
+      Vciter(const Viter< T >& other);
+      const T& operator*() const;
+      Vciter< T >& operator++();
+      Vciter< T > operator++(int);
+      Vciter< T >& operator--();
+      Vciter< T > operator--(int);
+      Vciter< T >& operator+=(size_t n);
+      Vciter< T >& operator-=(size_t n);
+      Vciter< T > operator+(size_t n) const;
+      Vciter< T > operator-(size_t n) const;
+      long long operator-(const Vciter< T >& other) const;
+      bool operator==(const Vciter< T >& other) const;
+      bool operator!=(const Vciter< T >& other) const;
+      bool operator<(const Vciter< T >& other) const;
+  };
 }
 
 template< class T >
