@@ -99,6 +99,84 @@ namespace knk
 }
 
 template< class T >
+knk::Viter< T >::Viter(T* ptr):
+  p(ptr)
+{}
+
+template< class T >
+T& knk::Viter< T >::operator*() const {
+  return *p;
+}
+
+template< class T >
+knk::Viter< T >& knk::Viter< T >::operator++() {
+  ++p;
+  return *this;
+}
+
+template< class T >
+knk::Viter< T > knk::Viter< T >::operator++(int) {
+  Viter tmp = *this;
+  ++p;
+  return tmp;
+}
+
+template< class T >
+knk::Viter< T >& knk::Viter< T >::operator--() {
+  --p;
+  return *this;
+}
+
+template< class T >
+knk::Viter< T > knk::Viter< T >::operator--(int) {
+  Viter tmp = *this;
+  --p;
+  return tmp;
+}
+
+template< class T >
+knk::Viter< T >& knk::Viter< T >::operator+=(size_t n) {
+  p += n;
+  return *this;
+}
+
+template< class T >
+knk::Viter< T >& knk::Viter< T >::operator-=(size_t n) {
+  p -= n;
+  return *this;
+}
+
+template< class T >
+knk::Viter< T > knk::Viter< T >::operator+(size_t n) const {
+  return Viter(p + n);
+}
+
+template< class T >
+knk::Viter< T > knk::Viter< T >::operator-(size_t n) const {
+  return Viter(p - n);
+}
+
+template< class T >
+long long knk::Viter< T >::operator-(const Viter< T >& other) const {
+  return p - other.p;
+}
+
+template< class T >
+bool knk::Viter< T >::operator==(const Viter< T >& other) const {
+  return p == other.p;
+}
+
+template< class T >
+bool knk::Viter< T >::operator!=(const Viter< T >& other) const {
+  return p != other.p;
+}
+
+template< class T >
+bool knk::Viter< T >::operator<(const Viter< T >& other) const {
+  return p < other.p;
+}
+
+template< class T >
 knk::Vector< T >::Vector(Vector < T >&& rhs) noexcept:
   data_(rhs.data_),
   size_(rhs.size_),
