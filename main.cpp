@@ -85,11 +85,11 @@ bool testElementCheckOutOfBoundConstAccess(const char ** pname) {
 
 bool  testCopyConstructor(const char ** pname) {
   *pname = __func__;
-  Vector< int > v; //??
+  Vector< int > v;
   v.pushBack(1);
   v.pushBack(2);
   Vector< int > yav = v;
-  if (!v.isEmpty() && !yav.isEmpty()) {
+  if (v.isEmpty() || yav.isEmpty()) {
     throw std::logic_error("Vectors expected is not to be empty");
   }
   bool isEqual = yav.getSize() == v.getSize();
@@ -134,6 +134,120 @@ bool testPopBackDecreasesSize(const char ** pname) {
   return v.getSize() == 1ull;
 }
 
+bool testBracketAccess(const char ** pname) {
+  *pname = __func__;
+  Vector<int> v(2, 10);
+  v[1] = 20;
+  return v[0] == 10 && v[1] == 20;
+}
+
+bool testMoveConstructor(const char ** pname) {
+  *pname = __func__;
+  Vector<int> v1(5, 42);
+  Vector<int> v2(std::move(v1));
+  return v2.getSize() == 5 && v1.isEmpty();
+}
+
+bool testCopyAssignment(const char ** pname) {
+  *pname = __func__;
+  Vector<int> v1(2, 7);
+  Vector<int> v2;
+  v2 = v1;
+  return v2.getSize() == 2 && v1.getSize() == 2 && v2[0] == 7;
+}
+
+bool testMoveAssignment(const char ** pname) {
+  *pname = __func__;
+  Vector<int> v1(3, 9);
+  Vector<int> v2;
+  v2 = std::move(v1);
+  return v2.getSize() == 3 && v1.isEmpty();
+}
+
+bool testInsertByIndex(const char ** pname) {
+  *pname = __func__;
+  Vector<int> v;
+  v.pushBack(1); v.pushBack(3);
+  v.insert(1, 2);
+  return v.getSize() == 3 && v[1] == 2;
+}
+
+bool testInsertVectorRange(const char ** pname) {
+  *pname = __func__;
+  Vector<int> v1; v1.pushBack(1); v1.pushBack(4);
+  Vector<int> v2; v2.pushBack(10); v2.pushBack(2); v2.pushBack(3);
+  v1.insert(1, v2, 1, 3);
+  return v1.getSize() == 4 && v1[1] == 2 && v1[2] == 3;
+}
+
+bool testEraseByIndexRange(const char ** pname) {
+  *pname = __func__;
+  Vector<int> v;
+  for(int i=0; i<5; ++i) v.pushBack(i);
+  v.erase(1, 4);
+  return v.getSize() == 2 && v[1] == 4;
+}
+
+bool testPushFront(const char ** pname) {
+  *pname = __func__;
+  Vector<int> v;
+  v.pushBack(1);
+  v.pushFront(0);
+  return v[0] == 0 && v.getSize() == 2;
+}
+
+bool testPushBackRepeat(const char ** pname) {
+  *pname = __func__;
+  Vector<int> v;
+  v.pushBackRepeat(5, 3);
+  return v.getSize() == 3 && v[2] == 5;
+}
+
+bool testSwap(const char ** pname) {
+  *pname = __func__;
+  Vector<int> v1(1, 1);
+  Vector<int> v2(2, 2);
+  v1.swap(v2);
+  return v1.getSize() == 2 && v2.getSize() == 1;
+}
+
+bool testIterInsertSingle(const char ** pname) {
+  *pname = __func__;
+  Vector<int> v; v.pushBack(1); v.pushBack(3);
+  v.insert(v.cbegin() + 1, 2);
+  return v[1] == 2 && v.getSize() == 3;
+}
+
+bool testIterInsertCount(const char ** pname) {
+  *pname = __func__;
+  Vector<int> v; v.pushBack(1);
+  v.insert(v.cbegin() + 1, 2, 99);
+  return v.getSize() == 3 && v[1] == 99 && v[2] == 99;
+}
+
+bool testIterInsertRange(const char ** pname) {
+  *pname = __func__;
+  Vector<int> v1; v1.pushBack(1); v1.pushBack(4);
+  Vector<int> v2; v2.pushBack(2); v2.pushBack(3);
+  v1.insert(v1.cbegin() + 1, v2.cbegin(), v2.cend());
+  return v1.getSize() == 4 && v1[1] == 2 && v1[2] == 3;
+}
+
+bool testIterEraseSingle(const char ** pname) {
+  *pname = __func__;
+  Vector<int> v; v.pushBack(1); v.pushBack(2); v.pushBack(3);
+  v.erase(v.cbegin() + 1);
+  return v.getSize() == 2 && v[1] == 3;
+}
+
+bool testIterEraseRange(const char ** pname) {
+  *pname = __func__;
+  Vector<int> v;
+  for(int i=0; i<5; ++i) v.pushBack(i);
+  v.erase(v.cbegin() + 1, v.cbegin() + 4);
+  return v.getSize() == 2 && v[1] == 4;
+}
+
 int main()
 {
   using test_t = bool(*)(const char **);
@@ -151,7 +265,22 @@ int main()
     { testElementCheckOutOfBoundAccess, "Out of bound access must generate" },
     { testCopyConstructor, "Copied vector must be equal to original" },
     { testElementCheckConstAccess, "same as checkaccess" },
-    { testElementCheckOutOfBoundConstAccess, "same as checkbound" }
+    { testElementCheckOutOfBoundConstAccess, "same as checkbound" },
+    { testBracketAccess, "Operator [] read/write" },
+    { testMoveConstructor, "Move constructor logic" },
+    { testCopyAssignment, "Copy assignment operator" },
+    { testMoveAssignment, "Move assignment operator" },
+    { testInsertByIndex, "Insert by index" },
+    { testInsertVectorRange, "Insert range from another vector" },
+    { testEraseByIndexRange, "Erase index range" },
+    { testPushFront, "PushFront method" },
+    { testPushBackRepeat, "PushBackRepeat method" },
+    { testSwap, "Swap method" },
+    { testIterInsertSingle, "Iterator insert (single)" },
+    { testIterInsertCount, "Iterator insert (count)" },
+    { testIterInsertRange, "Iterator insert (range)" },
+    { testIterEraseSingle, "Iterator erase (single)" },
+    { testIterEraseRange, "Iterator erase (range)" }
   };
   constexpr size_t count = sizeof(tests) / sizeof(case_t);
   size_t failed = 0;
