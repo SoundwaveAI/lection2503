@@ -33,6 +33,7 @@ namespace knk
       void pushBack(const T&);
       void popBack();
       void pushFront(const T& v);
+      void pushBackRepeat(const T& v, size_t k);
 
       T& operator[](size_t id) noexcept;
       const T& operator[](size_t id) const noexcept;
@@ -273,13 +274,9 @@ knk::Vector< T >::~Vector() {
 
 template< class T >
 knk::Vector< T >::Vector(Vector < T >&& rhs) noexcept:
-  data_(rhs.data_),
-  size_(rhs.size_),
-  capacity_(rhs.capacity_)
+  Vector()
 {
-  rhs.data_ = nullptr;
-  rhs.size_ = 0;
-  rhs.capacity_ = 0;
+  swap(rhs);
 }
 
 template< class T >
@@ -416,6 +413,16 @@ void knk::Vector< T >::popBack() {
   if (size_ > 0) {
     --size_;
   }
+}
+
+template< class T >
+void knk::Vector< T >::pushBackRepeat(const T& t, size_t k)
+{
+  Vector< T > cpy(*this);
+  for (size_t i = 0; i < k; ++i) {
+    cpy.pushBack(t);
+  }
+  swap(cpy);
 }
 
 template< class T >
