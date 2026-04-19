@@ -177,6 +177,89 @@ bool knk::Viter< T >::operator<(const Viter< T >& other) const {
 }
 
 template< class T >
+knk::Vciter< T >::Vciter(const T* ptr):
+  p(ptr)
+{}
+
+template< class T >
+knk::Vciter< T >::Vciter(const Viter< T >& other):
+  p(other.p)
+{}
+
+template< class T >
+const T& knk::Vciter< T >::operator*() const {
+  return *p;
+}
+
+template< class T >
+knk::Vciter< T >& knk::Vciter< T >::operator++() {
+  ++p;
+  return *this;
+}
+
+template< class T >
+knk::Vciter< T > knk::Vciter< T >::operator++(int) {
+  Vciter tmp = *this;
+  ++p;
+  return tmp;
+}
+
+template< class T >
+knk::Vciter< T >& knk::Vciter< T >::operator--() {
+  --p;
+  return *this;
+}
+
+template< class T >
+knk::Vciter< T > knk::Vciter< T >::operator--(int) {
+  Vciter tmp = *this;
+  --p;
+  return tmp;
+}
+
+template< class T >
+knk::Vciter< T >& knk::Vciter< T >::operator+=(size_t n) {
+  p += n;
+  return *this;
+}
+
+template< class T >
+knk::Vciter< T >& knk::Vciter< T >::operator-=(size_t n) {
+  p -= n;
+  return *this;
+}
+
+template< class T >
+knk::Vciter< T > knk::Vciter< T >::operator+(size_t n) const {
+  return Vciter(p + n);
+}
+
+template< class T >
+knk::Vciter< T > knk::Vciter< T >::operator-(size_t n) const {
+  return Vciter(p - n);
+}
+
+template< class T >
+long long knk::Vciter< T >::operator-(const Vciter< T >& other) const {
+  return p - other.p;
+}
+
+template< class T >
+bool knk::Vciter< T >::operator==(const Vciter< T >& other) const {
+  return p == other.p;
+}
+
+template< class T >
+bool knk::Vciter< T >::operator!=(const Vciter< T >& other) const {
+  return p != other.p;
+}
+
+template< class T >
+bool knk::Vciter< T >::operator<(const Vciter< T >& other) const {
+  return p < other.p;
+}
+
+template< class T >
 knk::Vector< T >::Vector(Vector < T >&& rhs) noexcept:
   data_(rhs.data_),
   size_(rhs.size_),
