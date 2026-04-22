@@ -42,6 +42,8 @@ namespace knk
 
       Viter< T > begin() noexcept;
       Viter< T > end() noexcept;
+      Vciter< T > begin() const noexcept;
+      Vciter< T > end() const noexcept;
       Vciter< T > cbegin() const noexcept;
       Vciter< T > cend() const noexcept;
 
@@ -455,7 +457,7 @@ void knk::Vector< T >::insert(size_t id, const Vector< T >& rhs, size_t beg, siz
     tmp[id + i] = rhs.data_[beg + i];
   }
   for (size_t i = id; i < getSize(); ++i) {
-    tmp[id + count + i] = data_[i];
+    tmp[i + count] = data_[i];
   }
   swap(tmp);
 }
@@ -502,6 +504,16 @@ knk::Viter< T > knk::Vector< T >::end() noexcept {
 }
 
 template< class T >
+knk::Vciter< T > knk::Vector< T >::begin() const noexcept {
+  return Vciter< T >(data_);
+}
+
+template< class T >
+knk::Vciter< T > knk::Vector< T >::end() const noexcept {
+  return Vciter< T >(data_ + size_);
+}
+
+template< class T >
 knk::Vciter< T > knk::Vector< T >::cbegin() const noexcept {
   return Vciter< T >(data_);
 }
@@ -527,7 +539,7 @@ void knk::Vector< T >::insert(Vciter< T > pos, size_t count, const T& value) {
     tmp[id + i] = value;
   }
   for (size_t i = id; i < getSize(); ++i) {
-    tmp[id + count + i] = data_[i];
+    tmp[i + count] = data_[i];
   }
   swap(tmp);
 }
@@ -549,7 +561,7 @@ void knk::Vector< T >::insert(Vciter< T > pos, Vciter< T > first, Vciter< T > la
     ++i;
   }
   for (size_t j = id; j < getSize(); ++j) {
-    tmp[id + count + j] = data_[j];
+    tmp[j + count] = data_[j];
   }
   swap(tmp);
 }
